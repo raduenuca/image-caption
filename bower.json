@@ -1,0 +1,21 @@
+{
+  "name": "image-caption",
+  "description": "Adds caption and alt to an image using the Computer Vision API from Microsoft Cognitive Services",
+  "main": "image-caption.html",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "web-components",
+    "webcomponents"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2",
+    "web-component-tester": "^6",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1"
+  }
+}

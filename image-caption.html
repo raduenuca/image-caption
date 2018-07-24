@@ -1,0 +1,191 @@
+<!--
+`image-caption`
+Adds caption and alt to an image using the Computer Vision API from Microsoft Cognitive Services
+
+@demo demo/index.html
+-->
+<template id="image-caption">
+    <style>
+        :host {
+            display: block;
+        }
+
+        figure {
+            border: thin #c0c0c0 solid;
+            display: flex;
+            flex-flow: column;
+            margin: 0;
+            padding: 5px;
+        }
+
+        figcaption {
+            background-color: #222;
+            color: #fff;
+            font: italic smaller sans-serif;
+            text-align: center;
+            padding: 3px 0;
+            width:100%;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+    <figure>
+        <img id="image" src="" alt=""/>
+        <figcaption id="caption"></figcaption>
+    </figure>
+</template>
+
+<script>
+    (() => {
+        'use strict';
+
+        // Retrieve template from current script's document owner.
+        const doc = document.currentScript.ownerDocument;
+        const template = doc.querySelector('template#image-caption');
+
+        class ImageCaption extends HTMLElement {
+
+            static get observedAttributes() {
+                return ['api-key', 'api-region', 'language', 'src'];
+            }
+
+            attributeChangedCallback(name, old, value) {
+                if (old !== value) {
+                    const property = name.replace(/-([a-z])/g, function (g) {
+                        return g[1].toUpperCase();
+                    });
+                    this[property] = value;
+                }
+            }
+
+            constructor() {
+                super();
+
+                /**
+                 * @type {!Object}
+                 * @private
+                 */
+                this._properties = {
+                    apiRegion: 'westcentralus',
+                    language: 'en',
+                };
+            }
+
+            /**
+             * @property {string|null} api-key
+             */
+            get apiKey() {
+                return this._properties.apiKey;
+            }
+
+            set apiKey(val) {
+                if (val !== this.apiKey) {
+                    this._properties.apiKey = val;
+                    this._updateRendering();
+                }
+            }
+
+            /**
+             * @property {string|null} api-region
+             */
+            get apiRegion() {
+                return this._properties.apiRegion;
+            }
+
+            set apiRegion(val) {
+                if (val !== this.apiRegion) {
+                    this._properties.apiRegion = val;
+                    this._updateRendering();
+                }
+            }
+
+            /**
+             * @property {string|null} language
+             */
+            get language() {
+                return this._properties.language;
+            }
+
+            set language(val) {
+                if (val !== this.language) {
+                    this._properties.language = val;
+                    this._updateRendering();
+                }
+            }
+
+            /**
+             * @property {string|null} src
+             */
+            get src() {
+                return this._properties.src;
+            }
+
+            set src(val) {
+                if (val !== this.src) {
+                    this._properties.src = val;
+                    this._updateRendering();
+                }
+            }
+
+            connectedCallback() {
+                // Lazy creation of shadowRoot.
+                if (!this.shadowRoot) {
+                    this.attachShadow({
+                        mode: 'open'
+                    }).appendChild(document.importNode(template.content, true));
+                }
+                this._updateRendering();
+            }
+
+            /**
+             * @private
+             */
+            _updateRendering() {
+                // Avoid rendering when not connected.
+                if (this.shadowRoot && this.isConnected && this.src) {
+                    this.shadowRoot.querySelector('#image').src= this.src;
+
+                    if(this.apiKey && this.apiRegion && this.language) {
+
+                        const url = `https://${this.apiRegion}.api.cognitive.microsoft.com/vision/v2.0/describe?language=${this.language}`;
+
+                        const xhr = new XMLHttpRequest();
+
+                        // Create the HTTP Request object.
+                        xhr.open("POST", url);
+
+                        // Add the request headers.
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.setRequestHeader("Ocp-Apim-Subscription-Key", this.apiKey);
+
+                        // Set the response type to "json"
+                        xhr.responseType = "json";
+
+                        // Process the result of the REST API call.
+                        xhr.onreadystatechange = () => {
+                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                // Thumbnail successfully created.
+                                if (xhr.status === 200) {
+                                    this.caption = xhr.response.description.captions[0].text;
+                                } else {
+                                    this.caption= xhr.response.message;
+                                }
+
+                                this.shadowRoot.querySelector('#image').alt = this.caption;
+                                this.shadowRoot.querySelector('#caption').innerText = this.caption;
+                            }
+                        };
+
+                        // Make the REST API call.
+                        xhr.send(JSON.stringify({'url': this.src}));
+                    }
+                }
+            }
+        }
+
+        customElements.define('image-caption', ImageCaption);
+    })();
+</script>

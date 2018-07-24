@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>image-caption demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../image-caption.html">
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles"></style>
+    </custom-style>
+</head>
+
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic image-caption demo</h3>
+    <demo-snippet>
+        <template>
+            <input id="key" type="text">
+            <image-caption id="imageCaption"
+                           api-region="westeurope"
+                           src="http://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg"></image-caption>
+        </template>
+        <script>
+            const imageCaption = document.getElementById('imageCaption');
+            const subscriptionKeyInput = document.getElementById('key');
+            subscriptionKeyInput.onchange = (event) => imageCaption.apiKey = event.target.value;
+        </script>
+    </demo-snippet>
+</div>
+</body>
+
+</html>
