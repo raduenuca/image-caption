@@ -23,7 +23,7 @@ To use the Computer Vision API, you need a [subscription key](https://docs.micro
 <custom-element-demo>
   <template>
 <!-- START-HIDDEN-SECTION: Add imports and styling here. -->
-<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<script src="../webcomponentsjs/webcomponents-loader.js"></script>
 <link rel="import" href="image-caption.html">
 <style is="custom-style">
         .form-style {
