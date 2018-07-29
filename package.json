@@ -2,7 +2,7 @@
   "name": "image-caption",
   "description": "Adds caption and alt to an image using the Computer Vision API from Microsoft Cognitive Services",
   "main": "image-caption.html",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "keywords": [
     "web-components",
