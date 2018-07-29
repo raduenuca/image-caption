@@ -16,15 +16,26 @@ Adds caption and alt to an image using the Computer Vision API from Microsoft Co
             flex-flow: column;
             margin: 0;
             padding: 5px;
+
+            @apply --image-caption-figure;
         }
 
         figcaption {
-            background-color: #222;
             color: #fff;
             font: italic smaller sans-serif;
             text-align: center;
             padding: 3px 0;
-            width:100%;
+            width: 100%;
+
+            @apply --image-caption-text;
+        }
+
+        :host(.caption-success) figcaption {
+            background-color: var(--image-caption-success, #222);
+        }
+
+        :host(.caption-error) figcaption {
+            background-color: var(--image-caption-success, #f00);
         }
 
         img {
@@ -146,9 +157,9 @@ Adds caption and alt to an image using the Computer Vision API from Microsoft Co
             _updateRendering() {
                 // Avoid rendering when not connected.
                 if (this.shadowRoot && this.isConnected && this.src) {
-                    this.shadowRoot.querySelector('#image').src= this.src;
+                    this.shadowRoot.querySelector('#image').src = this.src;
 
-                    if(this.apiKey && this.apiRegion && this.language) {
+                    if (this.apiKey && this.apiRegion && this.language) {
 
                         const url = `https://${this.apiRegion}.api.cognitive.microsoft.com/vision/v2.0/describe?language=${this.language}`;
 
@@ -170,8 +181,12 @@ Adds caption and alt to an image using the Computer Vision API from Microsoft Co
                                 // Thumbnail successfully created.
                                 if (xhr.status === 200) {
                                     this.caption = xhr.response.description.captions[0].text;
+                                    this.classList.remove('caption-error');
+                                    this.classList.add('caption-success');
                                 } else {
-                                    this.caption= xhr.response.message;
+                                    this.caption = xhr.response ? xhr.response.message : 'Unknown error';
+                                    this.classList.remove('caption-success');
+                                    this.classList.add('caption-error');
                                 }
 
                                 this.shadowRoot.querySelector('#image').alt = this.caption;
